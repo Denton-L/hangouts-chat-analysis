@@ -2,6 +2,7 @@
 
 import json
 import traceback
+import re
 
 class MessagesObject:
 
@@ -28,7 +29,7 @@ class MessagesObject:
                                 text += '\n'
                         self.messages.append({
                                 'timestamp': int(event['timestamp']),
-                                'conversationId': conversation['conversation_id']['id'],
+                                'conversationID': conversation['conversation_id']['id'],
                                 'sender': event['sender_id']['chat_id'],
                                 'text': text
                                 })
@@ -41,3 +42,6 @@ class MessagesObject:
             message["sender"] = senders[message["sender"]]
 
         self.messages.sort(key = lambda message: message["timestamp"])
+
+    def toJson(self, jsonFile):
+        messages
