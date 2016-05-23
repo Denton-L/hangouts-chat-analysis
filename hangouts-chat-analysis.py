@@ -89,7 +89,7 @@ class Messages:
     def count(self):
         return len(self.messages)
 
-    def prettyPrint(self):
+    def print(self):
         for message in self.messages:
             print(
                     time.ctime(message['timestamp']),
