@@ -1,16 +1,19 @@
 #!/bin/python
 
 import json
+import traceback
 
 def parseTakeout(jsonFile):
     messages = []
+    senders = {}
     parsed = json.load(jsonFile)
     for conversation in parsed['conversation_state']:
-        senders = {
-                i['id']['chat_id']:
-                    i['fallback_name'] if 'fallback_name' in i else i['id']['chat_id']
-                for i in conversation['conversation_state']['conversation']['participant_data']
-                }
+        for person in conversation['conversation_state']['conversation']['participant_data']:
+            if 'fallback_name' in person:
+                senders[person['id']['chat_id']] = person['fallback_name']
+            elif not person['id']['chat_id'] in senders:
+                senders[person['id']['chat_id']] = person['id']['chat_id']
+
         for event in conversation['conversation_state']['event']:
             try:
                 text = ''
@@ -20,15 +23,19 @@ def parseTakeout(jsonFile):
                             text += segment['text']
                         elif segment['type'] == 'LINE_BREAK':
                             text += '\n'
-                        else:
-                            print(segment)
                     messages.append({
                             'timestamp': int(event['timestamp']),
                             'conversationId': conversation['conversation_id']['id'],
-                            'sender': senders[event['self_event_state']['user_id']['chat_id']],
+                            'sender': event['sender_id']['chat_id'],
                             'text': text
                             })
             except:
                 print(event)
+                traceback.print_exc()
                 return
+
+    for message in messages:
+        message["sender"] = senders[message["sender"]]
+
+    messages.sort(key = lambda message: message["timestamp"])
     return messages
