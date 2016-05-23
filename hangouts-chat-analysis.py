@@ -83,8 +83,8 @@ class Messages:
                     if regex.match(message['text'])]
                 )
 
-    def slice(start, end):
-        return Messages(preParsed=message[start:end])
+    def slice(self, start, end):
+        return Messages(preParsed=self.messages[start:end])
 
     def count(self):
         return len(self.messages)
