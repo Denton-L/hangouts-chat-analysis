@@ -1,16 +1,17 @@
 #!/bin/python
 
 import json
-import traceback
 import re
+import time
+import traceback
 
-class MessagesObject:
+class Messages:
 
     messages = []
 
     def __init__(self, jsonFile=None, preParsed=None):
-        if not preParsed != None:
-            messages = preParsed
+        if preParsed != None:
+            self.messages = preParsed
         elif jsonFile != None:
             senders = {}
             parsed = json.load(jsonFile)
@@ -33,7 +34,7 @@ class MessagesObject:
                                 elif segment['type'] == 'LINE_BREAK':
                                     text += '\n'
                             self.messages.append({
-                                    'timestamp': int(event['timestamp']),
+                                    'timestamp': int(event['timestamp']) // 1000000,
                                     'conversationID': conversation['conversation_id']['id'],
                                     'sender': event['sender_id']['chat_id'],
                                     'text': text
@@ -50,3 +51,52 @@ class MessagesObject:
 
     def toJSON(self, jsonFile):
         json.dump(self.message, jsonFile)
+
+    def filterTimestamp(self, start=0, end=-1):
+        if start < 0:
+            start = int(time.time()) - start
+        if end < 0:
+            end = int(time.time()) - end
+        return Messages(
+                preParsed=[message for message in self.messages
+                    if start <= message['timestamp'] and message['timestamp'] < end]
+                )
+
+    def filterConversationID(self, regexp):
+        regex = re.compile(regexp)
+        return Messages(
+                preParsed=[message for message in self.messages
+                    if regex.match(message['conversationID'])]
+                )
+
+    def filterSender(self, regexp):
+        regex = re.compile(regexp)
+        return Messages(
+                preParsed=[message for message in self.messages
+                    if regex.match(message['sender'])]
+                )
+
+    def filterText(self, regexp):
+        regex = re.compile(regexp)
+        return Messages(
+                preParsed=[message for message in self.messages
+                    if regex.match(message['text'])]
+                )
+
+    def slice(start, end):
+        return Messages(preParsed=message[start:end])
+
+    def count(self):
+        return len(self.messages)
+
+    def prettyPrint(self):
+        for message in self.messages:
+            print(
+                    time.ctime(message['timestamp']),
+                    '|',
+                    message['conversationID'],
+                    '|',
+                    message['sender'].rjust(20),
+                    '|',
+                    message['text']
+                )
