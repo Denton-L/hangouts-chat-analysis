@@ -69,17 +69,17 @@ class Filter:
 
     def filterConversationID(self, regexp):
         regex = re.compile(regexp)
-        self.iterator = filter(lambda message: if regex.match(message['conversationID']), self.iterator)
+        self.iterator = filter(lambda message: regex.match(message['conversationID']), self.iterator)
         return self
 
     def filterSender(self, regexp):
         regex = re.compile(regexp)
-        self.iterator = filter(lambda message: if regex.match(message['sender']), self.iterator)
+        self.iterator = filter(lambda message: regex.match(message['sender']), self.iterator)
         return self
 
     def filterText(self, regexp):
         regex = re.compile(regexp)
-        self.iterator = filter(lambda message: if regex.match(message['text']), self.iterator)
+        self.iterator = filter(lambda message: regex.match(message['text']), self.iterator)
         return self
 
     def slice(self, start, end):
