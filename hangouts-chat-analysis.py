@@ -1,5 +1,6 @@
 #!/bin/python
 
+import itertools
 import json
 import re
 import time
@@ -83,10 +84,11 @@ class Filter:
         return self
 
     def slice(self, start, end):
-        return Messages(preParsed=self.messages[start:end])
+        self.iterator = itertools.islice(self.itertools, start, end)
+        return self
 
     def count(self):
-        return len(self.messages)
+        return sum(1 for message in self.iterator)
 
     def print(self):
         for message in self.iterator:
