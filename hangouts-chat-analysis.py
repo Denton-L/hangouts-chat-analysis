@@ -63,31 +63,24 @@ class Filter:
             start = int(time.time()) - start
         if end < 0:
             end = int(time.time()) - end
-        return Messages(
-                preParsed=[message for message in self.messages
-                    if start <= message['timestamp'] and message['timestamp'] < end]
-                )
+        self.iterator = filter(lambda message: start <= message['timestamp'] and message['timestamp'] < end, self.iterator)
+        return self
+
 
     def filterConversationID(self, regexp):
         regex = re.compile(regexp)
-        return Messages(
-                preParsed=[message for message in self.messages
-                    if regex.match(message['conversationID'])]
-                )
+        self.iterator = filter(lambda message: if regex.match(message['conversationID']), self.iterator)
+        return self
 
     def filterSender(self, regexp):
         regex = re.compile(regexp)
-        return Messages(
-                preParsed=[message for message in self.messages
-                    if regex.match(message['sender'])]
-                )
+        self.iterator = filter(lambda message: if regex.match(message['sender']), self.iterator)
+        return self
 
     def filterText(self, regexp):
         regex = re.compile(regexp)
-        return Messages(
-                preParsed=[message for message in self.messages
-                    if regex.match(message['text'])]
-                )
+        self.iterator = filter(lambda message: if regex.match(message['text']), self.iterator)
+        return self
 
     def slice(self, start, end):
         return Messages(preParsed=self.messages[start:end])
@@ -96,7 +89,7 @@ class Filter:
         return len(self.messages)
 
     def print(self):
-        for message in self.messages:
+        for message in self.iterator:
             print(
                     time.ctime(message['timestamp']),
                     '|',
