@@ -52,6 +52,12 @@ class Messages:
     def toJSON(self, jsonFile):
         json.dump(self.message, jsonFile)
 
+
+class Filter:
+
+    def __init__(self, messages):
+        self.iterator = iter(messages.messages)
+
     def filterTimestamp(self, start=0, end=-1):
         if start < 0:
             start = int(time.time()) - start
