@@ -75,7 +75,7 @@ class Filter:
         return self
 
     def slice(self, start, end):
-        self.iterator = itertools.islice(self.itertools, start, end)
+        self.iterator = itertools.islice(self.iterator, start, end)
         return self
 
     def count(self):
