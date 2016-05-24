@@ -9,7 +9,7 @@ class Messages:
 
     messages = []
 
-    def __init__(self, jsonFile=None, preParsed=None):
+    def __init__(self, preParsed=None, jsonFile=None):
         if preParsed != None:
             self.messages = preParsed
         elif jsonFile != None:
